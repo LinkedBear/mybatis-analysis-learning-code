@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dynamic">
+
+    <select id="findAllDepartment" parameterType="Department" resultType="Department">
+        select * from tbl_department
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="name != null">
+                and name like concat('%', #{name}, '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllUser" parameterType="User" resultType="User">
+        select * from tbl_user
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <!-- 借助OGNL直接获取department对象的id属性 -->
+            <if test="department.id != null">
+                and department_id = #{department.id}
+            </if>
+            <!-- 借助OGNL直接调用字符串的trim()方法 -->
+            <if test="name != null and name.trim() != ''">
+                and name like concat('%', #{name}, '%')
+            </if>
+            <!-- 包括可以直接调用静态常亮、方法，使用运算符等 -->
+        </where>
+    </select>
+
+    <select id="findAllDepartmentUseTrim" parameterType="Department" resultType="Department">
+        select * from tbl_department
+        <!--
+        <where>
+            <if test="id != null">
+                id = #{id} and
+            </if>
+            <if test="name != null">
+                name like concat('%', #{name}, '%') and
+            </if>
+        </where>
+        -->
+        <!-- 使用trim代替where -->
+        <trim prefix="where" prefixOverrides="" suffix="" suffixOverrides="and">
+            <if test="id != null">
+                id = #{id} and
+            </if>
+            <if test="name != null">
+                name like concat('%', #{name}, '%') and
+            </if>
+        </trim>
+    </select>
+
+    <select id="findAllDepartmentUseChoose" parameterType="Department" resultType="Department">
+        select * from tbl_department
+        <choose>
+            <when test="id != null and id != ''">
+                where id = #{id}
+            </when>
+            <when test="name != null and name != ''">
+                where name like concat('%', #{name}, '%')
+            </when>
+            <otherwise>
+                where tel = #{tel}
+            </otherwise>
+        </choose>
+    </select>
+
+    <select id="findAllDepartmentUseForeach" parameterType="list" resultType="Department">
+        select * from tbl_department
+        where id in
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="findAllDepartmentUseBind" parameterType="Department" resultType="Department">
+        <bind name="namelike" value="'%' + _parameter.getName() + '%'"/>
+        select * from tbl_department
+        where name like #{namelike}
+    </select>
+
+    <update id="updateDepartment" parameterType="Department">
+        update tbl_department
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="tel != null and tel != ''">
+                tel = #{tel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateDepartmentByMap" parameterType="map">
+        update tbl_department
+        <foreach collection="beanMap" index="key" item="value" open="set " separator=",">
+            <if test="value != null">
+                ${key} = #{value}
+            </if>
+        </foreach>
+        where id = #{id}
+    </update>
+
+    <select id="findAllUseSql" resultType="map">
+        select
+        <include refid="columns">
+            <property name="includeId" value="false"/>
+        </include>
+        from tbl_department
+        <where>
+            <include refid="whereconditions"/>
+        </where>
+    </select>
+
+    <sql id="columns">
+        name, tel
+        <if test="${includeId} != null and ${includeId} == true">
+            , id
+        </if>
+    </sql>
+
+    <sql id="whereconditions">
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="name != null">
+            and name like concat('%', #{name}, '%')
+        </if>
+    </sql>
+
+</mapper>

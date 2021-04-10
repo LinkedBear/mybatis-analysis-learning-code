@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <properties resource="jdbc.properties">
+        <property name="jdbc.driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbc.url" value="jdbc:mysql://localhost:3306/mybatis?characterEncoding=utf-8"/>
+        <property name="jdbc.username" value="root"/>
+        <property name="jdbc.password" value="123456"/>
+    </properties>
+    
+    <settings>
+        <setting name="logImpl" value="LOG4J"/>
+    </settings>
+
+    <typeAliases>
+        <!-- 逐个声明
+        <typeAlias alias="Department" type="com.linkedbear.mybatis.entity.Department"/>
+        -->
+
+        <!-- 包扫描
+             以此法被扫描的实体类，别名为类名的首字母小写形式(类似于Bean -> bean)
+        -->
+        <package name="com.linkedbear.mybatis.entity"/>
+    </typeAliases>
+
+    <typeHandlers>
+        <typeHandler handler="com.linkedbear.mybatis.handler.DepartmentTypeHandler"
+                     javaType="com.linkedbear.mybatis.entity.Department" jdbcType="VARCHAR"/>
+    </typeHandlers>
+    
+    <objectFactory type="com.linkedbear.mybatis.factory.ExtendsObjectFactory"/>
+
+    <!--
+    <plugins>
+        <plugin interceptor=""></plugin>
+    </plugins>
+    -->
+
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driverClassName}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+        <environment id="production">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="${prod.driverClassName}"/>
+                <property name="url" value="${prod.url}"/>
+                <property name="username" value="${prod.username}"/>
+                <property name="password" value="${prod.password}"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <databaseIdProvider type="DB_VENDOR">
+        <property name="MySQL" value="mysql"/>
+        <property name="Oracle" value="oracle"/>
+        <property name="PostgreSQL" value="postgresql"/>
+    </databaseIdProvider>
+
+    <mappers>
+        <mapper resource="mapper/department.xml"/>
+        <mapper resource="mapper/user.xml"/>
+        <!--
+        <mapper class="com.linkedbear.mybatis.mapper.UserMapper"/>
+        <package name="com.linkedbear.mybatis.mapper"/>
+        -->
+    </mappers>
+</configuration>
