@@ -27,5 +27,7 @@
     <mappers>
         <mapper resource="mapper/department.xml"/>
         <mapper resource="mapper/user.xml"/>
+        <mapper class="com.linkedbear.mybatis.mapper.DepartmentAnnotationMapper"/>
+        <mapper class="com.linkedbear.mybatis.mapper.UserAnnotationMapper"/>
     </mappers>
 </configuration>
