@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linkedbear.mybatis.mapper.UserMapper">
+    <cache />
+
+    <resultMap id="userMap" type="com.linkedbear.mybatis.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="birthday" column="birthday"/>
+        <association property="department" javaType="com.linkedbear.mybatis.entity.Department">
+            <id property="id" column="department_id"/>
+            <result property="name" column="department_name"/>
+        </association>
+    </resultMap>
+
+    <resultMap id="userlazy" type="com.linkedbear.mybatis.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="birthday" column="birthday"/>
+        <association property="department" javaType="com.linkedbear.mybatis.entity.Department"
+                     select="com.linkedbear.mybatis.mapper.DepartmentMapper.findById" column="department_id"/>
+    </resultMap>
+
+    <resultMap id="userWithPrefix" type="com.linkedbear.mybatis.entity.User">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="age" column="age"/>
+        <result property="birthday" column="birthday"/>
+        <association property="department" javaType="com.linkedbear.mybatis.entity.Department"
+                     resultMap="com.linkedbear.mybatis.mapper.DepartmentMapper.department" columnPrefix="department_"/>
+    </resultMap>
+    
+    <resultMap id="userWithDiscriminator" type="com.linkedbear.mybatis.entity.User">
+        <discriminator column="deleted" javaType="boolean">
+            <case value="false" resultMap="userlazy"/>
+            <case value="true" resultType="com.linkedbear.mybatis.entity.User"/>
+        </discriminator>
+    </resultMap>
+
+    <select id="findAll" resultType="com.linkedbear.mybatis.entity.User">
+        select * from tbl_user
+    </select>
+
+    <!--
+    <select id="findAll" resultMap="userMap">
+        select usr.*, dep.name as department_name
+        from tbl_user usr
+        left join tbl_department dep on usr.department_id = dep.id
+    </select>
+    -->
+
+    <!--
+    <select id="findAll" resultMap="userWithPrefix">
+        select usr.*, dep.name as department_name, dep.tel as department_tel
+        from tbl_user usr
+        left join tbl_department dep on usr.department_id = dep.id
+    </select>
+    -->
+
+    <select id="findAllLazy" resultMap="userlazy">
+        select * from tbl_user
+    </select>
+    
+    <select id="findAllUseDiscriminator" resultMap="userWithDiscriminator">
+        select * from tbl_user
+    </select>
+
+    <insert id="saveUser" parameterType="com.linkedbear.mybatis.entity.User">
+        insert into tbl_user (id, name, department_id) VALUES (#{id}, #{name}, #{department.id})
+    </insert>
+
+    <select id="findAllByDepartmentId" parameterType="string"
+            resultType="com.linkedbear.mybatis.entity.User">
+        select * from tbl_user where department_id = #{departmentId}
+    </select>
+
+    <select id="cleanCache" resultType="int" flushCache="true">
+        select count(id) from tbl_user
+    </select>
+</mapper>
