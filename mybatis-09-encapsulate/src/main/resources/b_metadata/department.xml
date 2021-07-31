@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.linkedbear.mybatis.encapsulate.b_metadata.DepartmentMapper">
+    <!--
+    <update id="update" parameterType="com.linkedbear.mybatis.entity.Department">
+        update tbl_department set name = #{name}, tel = #{tel} where id = #{id}
+    </update>
+
+    <select id="findAll" resultType="com.linkedbear.mybatis.entity.Department">
+        select * from tbl_department
+    </select>
+
+    <select id="findById" parameterType="string" resultType="com.linkedbear.mybatis.entity.Department">
+        select * from tbl_department where id = #{id}
+    </select>
+    -->
+</mapper>
